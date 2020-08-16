@@ -10,13 +10,10 @@ RUN bash nodesource_setup.sh
 
 RUN apt-get install -y build-essential nodejs make gcc g++
 
-WORKDIR . /app
+RUN git clone https://github.com/Scorpionchiques/streamingTask
 
-COPY package*.json ./
+WORKDIR /streamingTask
 
 RUN npm install
-
-COPY . .
-
 
 CMD [ "npm", "start"]

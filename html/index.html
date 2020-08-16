@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <style type="text/css">
+    body {
+      font-family: Courier;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1em;
+    }
+
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+
+    label>input {
+      margin-left: 1em;
+    }
+
+    .grid {
+      margin-top: 1em;
+      display: grid;
+      grid-template-rows: 100%;
+      grid-template-columns: 50% 50%;
+    }
+
+    .grid video {
+      width: 100%;
+      margin: auto 0;
+    }
+
+    .grid canvas {
+      margin: auto auto;
+      max-width: 100%;
+    }
+
+    li {
+      margin: 20px;
+    }
+  </style>
+  <meta charset="utf-8">
+  <title>Tensor Task</title>
+
+<body>
+  <h1>Tensor Task</h1>
+  <h2>Браузер связывается по webrtc с сервером, сервер пишет с помощью ffmpeg стримы в hls.</h2>
+  <h2>Можно смотреть последний добавленный стрим в браузере через webrtc (минуя сервер).</h2>
+  <h2>Можно смотреть все добавленные стримы в hls с небольшой задержкой (node.js получает webrtc стрим и без обработки пишет его в hls формате).</h2>
+  <ul>
+    <li><a href="/broadcaster/index.html">broadcaster - стримить веб-камеру по webrtc на node.js</a>
+
+    <li><a href="/viewer/index.html">viewer - смотреть последний добавленный стрим через webrtc</a>
+
+    <li><a href="/rtmp-viewer">hls-viewer - смотреть все добавленные стримы в формате hls.</a>
+      <script src="index.js"></script>

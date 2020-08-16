@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style type="text/css">
+        body {
+            font-family: Courier;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1em;
+        }
+
+        label {
+            display: block;
+            margin-top: 1em;
+        }
+
+        label>input {
+            margin-left: 1em;
+        }
+
+        .grid {
+            margin-top: 1em;
+            display: grid;
+            grid-template-rows: 100%;
+            grid-template-columns: 50% 50%;
+        }
+
+        .grid video {
+            width: 100%;
+            margin: auto 0;
+        }
+
+        .grid canvas {
+            margin: auto auto;
+            max-width: 100%;
+        }
+    </style>
+    <meta charset="utf-8">
+    <title>Tensor Task</title>
+
+<body>
+    <h1>Tensor Task</h1>
+
+    <script>
+        let hlsStreamsList
+
+        const update = async () => {
+            try {
+                const response = await fetch("/hlsStreamsList")
+                hlsStreamsList = await response.json()
+                const videos = document.getElementsByTagName('video')
+                console.log(videos)
+                for (let i = 0; i < videos.length; ++i) {
+                    console.log(videos[i].id)
+                    if (!hlsStreamsList.includes(videos[i].id)) {
+                        try {
+                            videos[i].remove()
+                        } catch (e) {
+                            console.log(e)
+                        }
+                    }
+                }
+
+                hlsStreamsList.forEach(element => {
+                    if (!document.getElementById(element)) {
+                        video = document.createElement('video')
+                        video.setAttribute('type', 'application/x-mpegURL')
+                        video.setAttribute('id', element)
+                        video.autoplay = true
+                        video.muted = true
+                        document.body.appendChild(video);
+                        if (Hls.isSupported()) {
+                            const hls = new Hls({ liveSyncDurationCount: 5, autoStartLoad: true, startPosition: -1, manifestLoadingMaxRetry: 10, });
+
+                            hls.loadSource(element + '/index.m3u8');
+                            hls.counter = 0;
+                            hls.attachMedia(video);
+                            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                                video.play();
+                            });
+                            hls.on(Hls.Events.ERROR, (event, data) => {
+                                switch (data.type) {
+                                    case Hls.ErrorTypes.NETWORK_ERROR:    // playlist file 404'd (probably), wait 1 second and retry
+                                        console.log("network error on playlist load, retrying in 1 second.");
+                                        setTimeout(() => {
+                                            console.log(element)
+                                            if (hlsStreamsList.includes(element))
+                                                hls.loadSource(element + '/index.m3u8')
+                                        }, 1000);
+                                }
+                            });
+                        }
+                    }
+                })
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        update()
+        setInterval(update, 2000)
+
+
+    </script>
